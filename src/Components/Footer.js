@@ -17,7 +17,7 @@ const Footer = () => {
         <Foot>
             <Container>
                 <Flex justifyContent={"center"}>
-                    <Span>Работа выполнена Алексея Лесникова</Span>
+                    <Span>Работа выполнена @Ily4farmer</Span>
                 </Flex>
             </Container>
         </Foot>

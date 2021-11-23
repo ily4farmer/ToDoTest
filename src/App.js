@@ -1,25 +1,43 @@
-import React from 'react';
-import {HashRouter, Route, Routes } from "react-router-dom";
+import jwt_decode from "jwt-decode";
+import { observer } from 'mobx-react-lite';
+import React, { useEffect } from 'react';
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Footer from "./Components/Footer";
 import Header from "./Components/Header";
 import { Main } from "./globalStyles";
 import Home from "./Route/Home";
 import Shopping from "./Route/Shopping";
+import Data from './Store/Data';
 
-function App() {
+const App = observer(() => {
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token != null) {
+      Data.getToken(JSON.parse(token))
+      Data.getTokenId(jwt_decode(token))
+      navigate('/Shopping')
+    } else {
+      navigate('/')
+    }
+  }, [])
+
+
   return (
-    <HashRouter>
+    <>
       <Header/>
       <Main>
         <Routes>
           <Route exact  path="/" element={<Home/>}/>
-          <Route path="/Shopping" element={<Shopping/>}/>
+          <Route path="/Shopping" element={<Shopping token={Data.token}/>}/>
         </Routes>
       </Main>
       <Footer/>
-    </HashRouter>
+    </>
     
   );
-}
+});
 
 export default App;

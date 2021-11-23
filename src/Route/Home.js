@@ -1,4 +1,5 @@
 import axios from 'axios'
+import jwt_decode from 'jwt-decode'
 import { observer } from 'mobx-react-lite'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -22,25 +23,25 @@ const Home = observer(() => {
 
     const navigate = useNavigate();
 
-    async function getApi() {
+    async function getToken() {
         await axios.post('https://bc.gotbit.io/api/v1/new-session')
         .then(response => {
-            console.log(response.data.token)
+            const tokentId = jwt_decode(response.data.token)
             Data.getToken(response.data.token)
+            Data.getTokenId(tokentId)
+            localStorage.setItem('token', JSON.stringify(Data.token));
             navigate('/Shopping')
         })
         .catch(error => {
             console.log(error)}
         )
-
     }
-
 
     return (
         <SectionMain>
             <Container>
                 <Flex justifyContent="center">
-                    <div onClick={getApi}> 
+                    <div onClick={getToken}> 
                         <ConnectButton>Подключиться</ConnectButton>
                     </div>
                 </Flex>

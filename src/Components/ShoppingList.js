@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { toJS } from 'mobx'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
@@ -24,31 +23,59 @@ const List = styled.ul`
     }
 `
 
-const ShoppingList = observer(() => {
+const ShoppingList = observer(({token}) => {
 
-    // Data.listProducts
-    useEffect(()=> {
+        
+    useEffect(() => {
         axios({
             method: 'get', //you can set what request you want to be
             url: 'https://bc.gotbit.io/api/v1/items',
             headers: {
-                'TODO-TOKEN':"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbklkIjo5MywiZXhwIjoxNjM3Njc1MzIyLCJpYXQiOjE2Mzc1ODg5MjJ9.vTS-mpKZ_rpFU0OB_5-5kxMAV_igHXA-bcsG2B7zPOQ"
-            }
-          })
+                'TODO-TOKEN': token
+            }})
         .then(response => {
             Data.getListProduct(response.data)
             console.log(response.data);
-            // console.log(Data.listProducts);
 
         })
         .catch(error => {
             console.log(error)}
         )
-            
-    }, [])
+        
+        
+    }, [token])
+
+    async function deleteItem(id) {
+        await axios({
+            method: 'post', //you can set what request you want to be
+            url: `https://bc.gotbit.io/api/v1/item/${id}/delete`,
+            headers: {
+                'TODO-TOKEN': Data.token
+            }
+          })
+        .then(response => {console.log(response)})
+        .catch(error => {
+            console.log(error)}
+        )
+
+        await axios({
+            method: 'get', //you can set what request you want to be
+            url: 'https://bc.gotbit.io/api/v1/items',
+            headers: {
+                'TODO-TOKEN': Data.token
+            }})
+            .then(response => {
+                Data.getListProduct(response.data)
+            })
+            .catch(error => {
+            console.log(error)
+            })
+    }
+
+
     return (
         <List>
-            {Data.listProducts.map((el) => <ShoppingListItem key={el.id} {...el}/>)}
+            {Data.listProducts.map((el) => <ShoppingListItem deleteItem={deleteItem} key={el.id} {...el}/>)}
         </List>
     )
 })

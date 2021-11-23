@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import styled from 'styled-components'
 import { Input } from '../globalStyles'
@@ -14,7 +14,7 @@ const Form = styled.form`
     @media (max-width: 910px) {
         flex-direction: column;
         width: 100%;
-        margin-bottom: 20px;
+        margin-bottom: 0px;
     }
 `
 
@@ -45,63 +45,85 @@ const Select = styled.select`
     }
 `
 
+const Error = styled.label`
+    font-size: 14px;
+    text-align: center;
+`
+
 const FormShopping = observer(() => {
 
-    const {register, handleSubmit, error} = useForm();
+    const {register, handleSubmit } = useForm();
+    
+    const [inputText, setInputText] = useState('');
+    const [err, setErr] = useState('')
+
+    function handleInput(e) {   
+        const validated = e.target.value.match(/^(\d*\.{0,1}\d{0,2}$)/)
+        if (validated) {
+            setInputText(e.target.value)
+        }
+    }
+
 
     async function onSubmit (data) {
-
-        const product = {
-            id: 0,
-            title: data.title,
-            kind: data.kind,
-            price: Number(data.price),
-            done: false
-        }
-
-        await axios({
-            method: 'post', //you can set what request you want to be
-            url: 'https://bc.gotbit.io/api/v1/items',
-            data: product,
-            headers: {
-                'TODO-TOKEN':"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbklkIjo5MywiZXhwIjoxNjM3Njc1MzIyLCJpYXQiOjE2Mzc1ODg5MjJ9.vTS-mpKZ_rpFU0OB_5-5kxMAV_igHXA-bcsG2B7zPOQ"
+        if(data.kind !== '' && data.price !== '' && data.title !== '') {
+            setErr('');
+            console.log(data);
+            const product = {
+                id: 0,
+                title: data.title,
+                kind: data.kind,
+                price: Number(data.price),
+                done: false
             }
-          })
-        .then(response => {console.log(response)})
-        .catch(error => {
-            console.log(error)}
-        )
 
-
-        await axios({
-                method: 'get', //you can set what request you want to be
+            await axios({
+                method: 'post', //you can set what request you want to be
                 url: 'https://bc.gotbit.io/api/v1/items',
+                data: product,
                 headers: {
-                    'TODO-TOKEN':"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbklkIjo5MywiZXhwIjoxNjM3Njc1MzIyLCJpYXQiOjE2Mzc1ODg5MjJ9.vTS-mpKZ_rpFU0OB_5-5kxMAV_igHXA-bcsG2B7zPOQ"
+                    'TODO-TOKEN': Data.token
                 }
-              })
-            .then(response => {
-                // Data.getListProduct(response.data)
-                console.log(response.data);
-                // console.log(Data.listProducts);
-
             })
+            .then(response => {console.log(response)})
             .catch(error => {
                 console.log(error)}
             )
+
+
+            await axios({
+                    method: 'get', //you can set what request you want to be
+                    url: 'https://bc.gotbit.io/api/v1/items',
+                    headers: {
+                        'TODO-TOKEN': Data.token
+                    }
+                })
+                .then(response => {
+                    Data.getListProduct(response.data)
+                    console.log(response.data);
+                    // console.log(Data.listProducts);
+
+                })
+                .catch(error => {
+                    console.log(error)}
+                )
+        } else {
+            setErr("Заполните все поля")
+        }
     }
 
     return (
         <Form action="" onSubmit={handleSubmit(onSubmit)}>
-            <Select {...register('kind', { required: true })} name="kind">
-                <option defaultValue value="">Тип покупки</option>
+            <Select {...register('kind')} name="kind">
+                <option value="">Тип покупки</option>
                 <option value="еда">Eда</option>
                 <option value="Вода">Вода</option>
                 <option value="Быт">Быт</option>
             </Select>
-            <Input {...register('title', { required: true, minLength: 2 })} type={"text"} placeholder={"Название"} name="title"/>
-            <Input {...register('price', { required: true })} type="number" placeholder={"Цена"} name="price"/>
+            <Input {...register('title', { minLength: 1 })} type={"text"} placeholder={"Название"} name="title"/>
+            <Input onInput={handleInput} value={inputText} {...register('price')}  type="number" placeholder={"Цена"} name="price" step="0.01" />
             <Submit marginRight={"20px"} type={"submit"} placeholder={"Отправить"}/>
+            <Error>{err}</Error>
         </Form>
     )
 })

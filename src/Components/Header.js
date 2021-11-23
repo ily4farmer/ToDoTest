@@ -1,13 +1,15 @@
+import { toJS } from "mobx";
+import { observer } from "mobx-react-lite";
 import React from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Container, Flex, Img } from '../globalStyles';
 import logo from '../Img/logo.svg'
+import Data from "../Store/Data";
 
 const Head = styled.header`
-    padding: 28px 0;
+    padding: 25px 0;
     @media (max-width: 910px) {
-        padding: 15px 0;
+        padding: 8px 0;
     }
 `
 
@@ -25,18 +27,28 @@ const LogoImg = styled(Img)`
     height: 30px;
 `
 
+const Session = styled.div`
+    font-size: 20px;
 
-const Header = () => {
+`
+
+
+const Header = observer(() => {
+
+    const tokenId = toJS(Data.tokenId);
+    console.log(tokenId.tokenId);
+ 
+
     return (
-        // <div></div>
         <Head>
             <Container>
-                <Flex justifyContent={"space-between"}>
-                    <Link to="/"><Logo><LogoImg src={logo}/></Logo></Link>
+                <Flex justifyContent={"space-between"} alingItems={"center"}>
+                    <Logo><LogoImg src={logo}/></Logo>
+                    {tokenId === '' ? null : <Session>Id {tokenId.tokenId}</Session>}
                 </Flex>
             </Container>
         </Head>
     )
-}
+})
 
 export default Header
