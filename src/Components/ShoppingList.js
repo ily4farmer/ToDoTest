@@ -35,7 +35,6 @@ const ShoppingList = observer(({token}) => {
             }})
         .then(response => {
             Data.getListProduct(response.data)
-            console.log(response.data);
 
         })
         .catch(error => {

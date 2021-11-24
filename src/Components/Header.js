@@ -36,7 +36,6 @@ const Session = styled.div`
 const Header = observer(() => {
 
     const tokenId = toJS(Data.tokenId);
-    console.log(tokenId.tokenId);
  
 
     return (

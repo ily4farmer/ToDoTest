@@ -8,6 +8,7 @@ import Data from '../Store/Data'
 
 
 const Form = styled.form`
+    justify-content: center;
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 45px;
@@ -48,6 +49,7 @@ const Select = styled.select`
 const Error = styled.label`
     font-size: 14px;
     text-align: center;
+    width: 100%;
 `
 
 const FormShopping = observer(() => {
@@ -66,9 +68,10 @@ const FormShopping = observer(() => {
 
 
     async function onSubmit (data) {
+        // Проверка на заполненость полей
         if(data.kind !== '' && data.price !== '' && data.title !== '') {
             setErr('');
-            console.log(data);
+            // вставляем все данные из полей
             const product = {
                 id: 0,
                 title: data.title,
@@ -76,7 +79,7 @@ const FormShopping = observer(() => {
                 price: Number(data.price),
                 done: false
             }
-
+            // Отправка данных на сервер
             await axios({
                 method: 'post', //you can set what request you want to be
                 url: 'https://bc.gotbit.io/api/v1/items',
@@ -90,7 +93,7 @@ const FormShopping = observer(() => {
                 console.log(error)}
             )
 
-
+                // Получение данных с сервера
             await axios({
                     method: 'get', //you can set what request you want to be
                     url: 'https://bc.gotbit.io/api/v1/items',
@@ -100,8 +103,6 @@ const FormShopping = observer(() => {
                 })
                 .then(response => {
                     Data.getListProduct(response.data)
-                    console.log(response.data);
-                    // console.log(Data.listProducts);
 
                 })
                 .catch(error => {

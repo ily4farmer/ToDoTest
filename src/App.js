@@ -15,6 +15,7 @@ const App = observer(() => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    // если токен есть в локалке, тогда перекидывай на страницу Shopping
     if (token != null) {
       Data.getToken(JSON.parse(token))
       Data.getTokenId(jwt_decode(token))
