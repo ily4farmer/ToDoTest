@@ -31,7 +31,7 @@ const ShoppingList = observer(({token}) => {
             method: 'get', //you can set what request you want to be
             url: 'https://bc.gotbit.io/api/v1/items',
             headers: {
-                'TODO-TOKEN': token
+                'TODO-TOKEN': Data.token
             }})
         .then(response => {
             Data.getListProduct(response.data)

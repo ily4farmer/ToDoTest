@@ -6,7 +6,7 @@ import Data from '../Store/Data'
 
 const Shopping = ({token}) => {
 
-    console.log(token);
+   
 
     return (
         <Section>

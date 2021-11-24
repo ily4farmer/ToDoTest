@@ -38,6 +38,7 @@ const Text = styled.p`
 
 const ShoppingListItem = ({id, title, kind, price, done, deleteItem}) => {
 
+    // Изменить товар на купленный или некупленный
     async function doneItem(id) {
 
         const product = {
@@ -45,9 +46,11 @@ const ShoppingListItem = ({id, title, kind, price, done, deleteItem}) => {
             title: title,
             kind: kind,
             price: price,
+            // Меняем поле отвечающее за купленный или некупленный товар
             done: !done
         }
 
+        // Отправляем измененный товар на сервер
         await axios({
             method: 'post', //you can set what request you want to be
             url: `https://bc.gotbit.io/api/v1/item/${id}/update`,
@@ -56,23 +59,19 @@ const ShoppingListItem = ({id, title, kind, price, done, deleteItem}) => {
                 'TODO-TOKEN': Data.token
             }
           })
-        .then(response => {console.log(response)})
-        .catch(error => {
-            console.log(error)}
-        )
+        .then(response => console.log(response))
+        .catch(error => console.log(error))
 
+        // Получаем список товаров и отправляем в MobX
         await axios({
             method: 'get', //you can set what request you want to be
             url: 'https://bc.gotbit.io/api/v1/items',
             headers: {
                 'TODO-TOKEN': Data.token
             }})
-            .then(response => {
-                Data.getListProduct(response.data)
-            })
-            .catch(error => {
-            console.log(error)
-            })
+            // Добавляем в listProducts список товаров
+            .then(response => Data.getListProduct(response.data))
+            .catch(error => console.log(error))
     }
 
     return (

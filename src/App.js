@@ -14,10 +14,13 @@ const App = observer(() => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Получаем токен из локального хранилища
     const token = localStorage.getItem('token');
     // если токен есть в локалке, тогда перекидывай на страницу Shopping
     if (token != null) {
+      // Отправляем в MobX распарсенный токен из локального хранилища
       Data.getToken(JSON.parse(token))
+      // Декодируем jwt token, чтобы получить из него tokenId
       Data.getTokenId(jwt_decode(token))
       navigate('/Shopping')
     } else {
